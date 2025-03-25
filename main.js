@@ -2,6 +2,9 @@ let container = document.querySelector(".container");
 const buttonIsActive = document.querySelector("#isActive");
 const buttonIsInactive = document.querySelector("#isInactive");
 const buttonAll = document.querySelector("#all");
+const btns = document.querySelectorAll(".btn-truc");
+
+let activeBtn = null;
 
 const inputCheckbox = createElement("input", {
 	type: "checkbox",
@@ -55,7 +58,7 @@ function createDiv(logo, name, description, isActive) {
 	const inputCheckbox = createElement("input", {
 		type: "checkbox",
 		name: "toggle",
-		id: name
+		id: name,
 	});
 	label.appendChild(inputCheckbox);
 
@@ -63,6 +66,13 @@ function createDiv(logo, name, description, isActive) {
 		inputCheckbox.checked = true;
 	}
 
+	inputCheckbox.addEventListener("click", (e) => { 
+		for (let i = 0; i < globalData.length; i++) {
+			if (globalData[i].name === e.currentTarget.id) {
+				globalData[i].isActive = e.currentTarget.checked;
+			}
+		}
+	});
 
 	const spanSlider = createElement("span", { className: "slider" });
 	label.appendChild(spanSlider);
@@ -74,6 +84,29 @@ function createDiv(logo, name, description, isActive) {
 //   <input type="checkbox">
 //   <span class="slider"></span>
 // </label> */}
+
+for (const btn of btns) {
+	btn.addEventListener("click", (e) => {
+		if (activeBtn && activeBtn !== e.currentTarget) {
+			activeBtn.style.backgroundColor = "#2f364b";
+			activeBtn.style.color = "#fbfdfe";
+			activeBtn.style.border = "#535868 solid 1px";
+			activeBtn.removeEventListener("click", handleClick);
+		}
+
+		e.currentTarget.style.backgroundColor = "#F25C54";
+		e.currentTarget.style.color = "#091540";
+		e.currentTarget.style.border = "none";
+
+		e.currentTarget.addEventListener("click", handleClick);
+
+		activeBtn = e.currentTarget;
+	});
+}
+
+function handleClick(e) {
+	console.log(`Bouton ${e.currentTarget.innerText} activé.`);
+}
 
 buttonIsActive.addEventListener("click", () => {
 	const newData = [];
@@ -141,7 +174,7 @@ buttonIsInactive.addEventListener("click", () => {
 	}
 });
 
-buttonAll.addEventListener("click", ()=> {
+buttonAll.addEventListener("click", () => {
 	container.remove();
 
 	container = document.createElement("div");
@@ -160,7 +193,7 @@ buttonAll.addEventListener("click", ()=> {
 		);
 		container.appendChild(myCard);
 	}
-})
+});
 
 fetch("./data.json")
 	.then((response) => {
